@@ -18,7 +18,6 @@ app.set('port', process.env.PORT || 5000);
 app.use(morgan('dev'));
 app.use(jsonParser());
 
-if (process.env.NODE_ENV !== 'test') {
   //connect to mongo database
   mongoose.connect('mongodb://localhost/rest-api');
 
@@ -30,6 +29,7 @@ if (process.env.NODE_ENV !== 'test') {
   });
 
   //log successful database connection
+if (process.env.NODE_ENV !== 'test') {
   db.once('open', function(){
     console.log('db connection successful');
       seeder.seed(data, {dropDatabase: true}).then(function() {
@@ -39,6 +39,7 @@ if (process.env.NODE_ENV !== 'test') {
       });
   });
 }
+
 
 app.use(function(req, res, next){
   res.header('Access-Control-Allow-Origin', '*');
