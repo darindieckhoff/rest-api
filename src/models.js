@@ -5,12 +5,13 @@ var bcrypt = require('bcrypt');
 
 var Schema = mongoose.Schema;
 
-//validate email
+//reg expression for validating email
 var validateEmail = function(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 };
 
+//Defines User Schema
 var UserSchema = new Schema({
   fullName: {type: String, required: [true, 'Name is required.']},
   emailAddress: {
@@ -45,6 +46,7 @@ UserSchema.statics.authenticate = function(email, password, callback) {
     });
 }
 
+//hash password before writing to db
 UserSchema.pre('save', function(next){
   var user = this;
   bcrypt.hash(user.password, 10, function(err, hash){
@@ -54,6 +56,7 @@ UserSchema.pre('save', function(next){
   });
 });
 
+//Defines Course Schema
 var CourseSchema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},  
   title: {type: String, required: [true, 'Title is required.']},
@@ -71,6 +74,7 @@ var CourseSchema = new Schema({
     //Array of ObjectId values from reviews collection
 });
 
+//Defines Review Schema
 var ReviewSchema = new Schema({
   user: {type: Schema.Types.ObjectId, ref: 'User'},
   postedOn: {type: Date, default: Date.now()},

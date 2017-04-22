@@ -18,25 +18,27 @@ app.set('port', process.env.PORT || 5000);
 app.use(morgan('dev'));
 app.use(jsonParser());
 
-//connect to mongo database
-mongoose.connect('mongodb://localhost/rest-api');
+if (process.env.NODE_ENV !== 'test') {
+  //connect to mongo database
+  mongoose.connect('mongodb://localhost/rest-api');
 
-var db = mongoose.connection;
+  var db = mongoose.connection;
 
-// database connection error handling
-db.on('error', function(err){
-  console.error('connection error', err);
-});
-
-//log successful database connection
-db.once('open', function(){
-  console.log('db connection successful');
-  seeder.seed(data).then(function() {
-    console.log('Database Seeded')
-  }).catch(function(err) {
-    console.log(err);
+  // database connection error handling
+  db.on('error', function(err){
+    console.error('connection error', err);
   });
-});
+
+  //log successful database connection
+  db.once('open', function(){
+    console.log('db connection successful');
+      seeder.seed(data, {dropDatabase: true}).then(function() {
+        console.log('Database Seeded');
+      }).catch(function(err) {
+        console.log(err);
+      });
+  });
+}
 
 app.use(function(req, res, next){
   res.header('Access-Control-Allow-Origin', '*');

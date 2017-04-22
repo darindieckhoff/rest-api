@@ -7,7 +7,7 @@ var User = require('../models').User;
 var Review = require('../models').Review;
 var mid = require('../middleware');
 
-//GET all courses
+//GET courses for currently authenticated user
 router.get('/', mid.authorization, function(req, res, next){
   Course.find({user: req.data._id})
     .select('title')
@@ -22,7 +22,7 @@ router.get('/', mid.authorization, function(req, res, next){
     });
 });
 
-//get specific course
+//GET specific course for authenticated user
 router.get('/:courseId', mid.authorization, function(req, res, next){
   Course.findOne({user: req.data._id})
     .populate('user', 'fullName')
@@ -41,6 +41,7 @@ router.get('/:courseId', mid.authorization, function(req, res, next){
     });
 });
 
+//POST new course to db
 router.post('/', function (req, res, next){
   var course = new Course(req.body);
   course.save(function(err, user){
@@ -52,6 +53,7 @@ router.post('/', function (req, res, next){
   });
 });
 
+//PUT updates specific course if user is authenticated
 router.put('/:courseId', mid.authorization, function (req, res, next){
   var id = req.params.courseId,
     body = req.body;
@@ -67,6 +69,7 @@ router.put('/:courseId', mid.authorization, function (req, res, next){
   });
 });
 
+//POST adds new review to db if user is authenticated
 router.post('/:courseId/reviews', mid.authorization, function (req, res, next){
   Course.findOne({ _id: req.params.courseId})
     .populate('user')
@@ -76,6 +79,7 @@ router.post('/:courseId/reviews', mid.authorization, function (req, res, next){
       if (err) {
         return next(err);
       } 
+      //prevents authenticated user from adding review to their own course
       if (courseUser === authUser) {
         err = new Error('User cannot review their own course.');
         err.status = 401;

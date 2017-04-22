@@ -3,6 +3,7 @@
 var User = require('../models').User;
 var auth = require('basic-auth');
 
+//receives credentials from req and passes to User static file to verify with db
 function authorization(req, res, next){
   var credentials = auth(req);
   if (!credentials) {
