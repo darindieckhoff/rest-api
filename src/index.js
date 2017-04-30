@@ -1,5 +1,20 @@
 'use strict';
 
+/**----------------------------------------------------------------------
+ * @author:  Darin Dieckhoff
+ * Date:    April 30, 2017
+ *
+ * Project Info:
+*In this project, you’ll create a REST API using Express. 
+*The API will provide a way for users to review educational courses: 
+  *users can see a list of courses in a database; 
+  *add courses to the database; 
+  *and add reviews for a specific course.
+
+*To complete this project, you’ll use your knowledge of REST API design, Node.js, and Express to create API routes, 
+*along with Mongoose and MongoDB for data modeling, validation, and persistence.
+ ---------------------------------------------------------------------**/
+
 // load modules
 var express = require('express'),
     app = express(),
@@ -18,15 +33,15 @@ app.set('port', process.env.PORT || 5000);
 app.use(morgan('dev'));
 app.use(jsonParser());
 
-  //connect to mongo database
-  mongoose.connect('mongodb://localhost/rest-api');
+//connect to mongo database
+mongoose.connect('mongodb://localhost/rest-api');
 
-  var db = mongoose.connection;
+var db = mongoose.connection;
 
-  // database connection error handling
-  db.on('error', function(err){
-    console.error('connection error', err);
-  });
+// database connection error handling
+db.on('error', function(err){
+  console.error('connection error', err);
+});
 
   //log successful database connection
 if (process.env.NODE_ENV !== 'test') {

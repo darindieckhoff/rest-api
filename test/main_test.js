@@ -14,35 +14,31 @@ mongoose = require('mongoose'),
 
 chai.use(chaiHttp);
 
-describe('database', function() {
+describe('/GET', function() {
   before(function(done) {
     mongoose.connection.once('open', function(){
-      seeder.seed(data, {dropDatabase: true}).then(function() {
+      console.log('db connection successful');
+      seeder.seed(data, {dropDatabase: true})
+      .then(function() {
         console.log('Database Seeded');
+        done();  
       }).catch(function(err) {
         console.log(err);
       });
     });
-    done();
   });
-});
-
-describe('/GET user', function() {
   it("it should return credentialed user's document", function(done){
     chai.request(server)
       .get('/api/users')
       .auth("joe@smith.com", "password")
       .end(function(err, res){
         expect(res.status).to.equal(200);
-        //expect(res.emailAddress).to.equal("joe@smith.com");
+        expect(res.body.emailAddress).to.equal("joe@smith.com");
         done();
       });
   });
-});
-
-describe('/GET course', function() {
-  var id = '57029ed4795118be119cc43d';
   it('it should return 401 error with invalid credentials', function(done){
+    var id = '57029ed4795118be119cc43d';
     chai.request(server)
       .get('/api/courses/' + id)
       .auth("joe@smith.com", " wrong password")
